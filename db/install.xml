@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/smartblock/db" VERSION="20121008" COMMENT="XMLDB file for Moodle blocks/smartblock"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_smartblock_course" COMMENT="List of mysmark enabled courses" NEXT="block_smartblock_presence">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course id" PREVIOUS="id" NEXT="client_id"/>
+        <FIELD NAME="client_id" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="client_secret"/>
+        <FIELD NAME="client_secret" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="client_id" NEXT="end_policy"/>
+        <FIELD NAME="end_policy" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="Default voting end policy (0: selected hours after event end, 1: selected hour in the day after events end, 2: selected hour in the second day after the events end)" PREVIOUS="client_secret" NEXT="end_hour"/>
+        <FIELD NAME="end_hour" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default end hour for voting" PREVIOUS="end_policy" NEXT="params_name"/>
+        <FIELD NAME="params_name" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="end_hour" NEXT="params_scale"/>
+        <FIELD NAME="params_scale" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="params_name" NEXT="params_label"/>
+        <FIELD NAME="params_label" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="params_scale" NEXT="params_enable"/>
+        <FIELD NAME="params_enable" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="params_label" NEXT="course_start"/>
+        <FIELD NAME="course_start" TYPE="int" LENGTH="8" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The unix timestamp (64 bits) from which start considering valid events" PREVIOUS="params_enable"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="courseid" TYPE="unique" FIELDS="courseid" NEXT="id"/>
+        <KEY NAME="id" TYPE="primary" FIELDS="id" PREVIOUS="courseid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_smartblock_presence" COMMENT="Per event enabled students" PREVIOUS="block_smartblock_course" NEXT="block_smartblock_event">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="eventid"/>
+        <FIELD NAME="eventid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="studentid"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="eventid" NEXT="hash"/>
+        <FIELD NAME="hash" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false" PREVIOUS="studentid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="student_event" TYPE="unique" FIELDS="studentid, eventid" NEXT="event_hash"/>
+        <KEY NAME="event_hash" TYPE="unique" FIELDS="eventid, hash" PREVIOUS="student_event" NEXT="eventid"/>
+        <KEY NAME="eventid" TYPE="foreign" FIELDS="eventid" REFTABLE="event" REFFIELDS="eventid" PREVIOUS="event_hash" NEXT="id"/>
+        <KEY NAME="id" TYPE="primary" FIELDS="id" PREVIOUS="eventid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_smartblock_event" COMMENT="Enabled events" PREVIOUS="block_smartblock_presence" NEXT="block_smartblock_nfc">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="eventid"/>
+        <FIELD NAME="eventid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="end_hour"/>
+        <FIELD NAME="end_hour" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="eventid" NEXT="end_policy"/>
+        <FIELD NAME="end_policy" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="see course end_policy" PREVIOUS="end_hour" NEXT="mysm_ref"/>
+        <FIELD NAME="mysm_ref" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="end_policy"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="eventid" TYPE="unique" FIELDS="eventid" NEXT="id"/>
+        <KEY NAME="id" TYPE="primary" FIELDS="id" PREVIOUS="eventid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_smartblock_nfc" COMMENT="NFC tags / Students association" PREVIOUS="block_smartblock_event">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="studentid"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The student id" PREVIOUS="id" NEXT="hash"/>
+        <FIELD NAME="hash" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" PREVIOUS="studentid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="hash"/>
+        <KEY NAME="hash" TYPE="unique" FIELDS="hash" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

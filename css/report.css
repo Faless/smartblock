@@ -1,0 +1,17 @@
+#report_tabs {
+    display: inline-block;
+    border: 1px solid gray;
+    padding: 10px;
+}
+
+#report_tabs a {
+    margin: 10px;
+    color: blue;
+    text-decoration: none;
+}
+
+#report_tabs a.selected {
+    margin: 10px;
+    color: red;
+    text-decoration: none;
+}

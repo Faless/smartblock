@@ -1,0 +1,34 @@
+#global_config {
+    border: 1px solid gray;
+}
+
+td.global_config_key {
+    width: 250px;
+    padding: 10px;
+    border: 1px solid gray;
+}
+
+td.global_config_value {
+    width: 150px;
+    padding: 10px;
+    border: 1px solid gray;
+}
+
+#global_config td.timeframe_value label {
+    display: inline-block;
+    width: 190px;
+    margin-bottom: 5px;
+    vertical-align: middle;
+    margin: 10px 0px;
+}
+
+#global_config td.timeframe_value input {
+    display: inline-block;
+    width: 30px;
+    vertical-align: middle;
+    margin: 10px 10px;
+}
+
+img.help {
+    vertical-align: top;
+}
