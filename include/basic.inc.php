@@ -20,7 +20,7 @@
 global $CFG;
 if( $CFG == null ) {
     $moodleArr = explode( "/blocks/", 
-                          $_SERVER['DOCUMENT_ROOT'].$_SERVER['SCRIPT_NAME'] );
+                          getcwd() );
     $moodleDir = "";
     for ( $i = 0; $i < count($moodleArr)-1; $i++ ) {
         $moodleDir .= $moodleArr[$i];
