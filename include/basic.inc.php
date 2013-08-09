@@ -19,8 +19,7 @@
 // Always load moodle config
 global $CFG;
 if( $CFG == null ) {
-    $moodleArr = explode( "/blocks/", 
-                          getcwd() );
+    $moodleArr = explode( "/blocks/", $_SERVER["SCRIPT_FILENAME"] );
     $moodleDir = "";
     for ( $i = 0; $i < count($moodleArr)-1; $i++ ) {
         $moodleDir .= $moodleArr[$i];
